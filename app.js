@@ -1,8 +1,13 @@
 const   express     = require("express");
-const   Mongoose    = require("mongoose");
 const   app         = express();
 const   bodyParser  = require("body-parser");
 const   mongoose    = require("mongoose");
+
+var Campground = require("./models/campground");
+var Comment = require("./models/comment");
+var seedDB = require("./seeds");
+
+seedDB();
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
@@ -11,24 +16,6 @@ mongoose.connect("mongodb://localhost:27017/yelp_camp", {
     useUnifiedTopology: true
 });
 
-// Schema Set-up
-var campgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String,
-    description: String
-});
-
-var Campground = mongoose.model("Campground", campgroundSchema);
-
-// Campground.create({
-//     name: "Graphite Cave",
-//     image: "https://assets.atdw-online.com.au/images/c91e5862d9af9aebab1d4653274dd13e.jpeg?rect=0,0,2500,1875&w=745&h=559&&rot=360",
-//     description: "A Cave with beautiful Graphite to See"
-// }, function(error, campground) {
-//     if (error) console.log(error);
-//     else console.log(campground);
-// })
-
 app.get("/", function(req, res) {
     res.render("landing");
 });
@@ -36,9 +23,8 @@ app.get("/", function(req, res) {
 app.get("/campgrounds", function(req, res) {
     Campground.find({}, function(err, allCampgrounds) {
         if (err) console.log(err);
-        else res.render("index", {campgrounds: allCampgrounds});
+        else res.render("campgrounds/index", {campgrounds: allCampgrounds});
     })
-    
 });
 
 app.post("/campgrounds", function(req, res) {
@@ -58,19 +44,53 @@ app.post("/campgrounds", function(req, res) {
 });
 
 app.get("/campgrounds/new", function(req, res) {
-    res.render("new");
+    res.render("campgrounds/new");
 });
 
 app.get("/campgrounds/:id", function(req, res) {
-    var campground = Campground.findById(req.params.id, function(error, foundCampground) {
+    Campground.findById(req.params.id).populate("comments").exec(function(error, foundCampground) {
         if (error) {
-            console.log(err);
+            console.log(error);
         }
         else {
-            res.render("show", {campground:foundCampground});
+            res.render("campgrounds/show", {campground:foundCampground});
         }
     });
 });
+
+// =====================
+// COMMET ROUTES
+// =====================
+
+app.get("/campgrounds/:id/comments/new", function(req, res) {
+    Campground.findById(req.params.id, function(err, campground) {
+        if (err) console.log(err);
+        else {
+            res.render("comments/new", {campground: campground})
+        }
+    });
+});
+
+app.post("/campgrounds/:id/comments", function(req, res) {
+    Campground.findById(req.params.id, function(err, campground) {
+        if (err) {
+            console.log(err);
+            res.redirect("/campgrounds");
+        }
+        else {
+            Comment.create(req.body.comment, function(err, comment) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    campground.comments.push(comment);
+                    campground.save();
+                    res.redirect("/campgrounds/" + campground._id);
+                }
+            })
+        }
+    })
+})
 
 app.listen(3000, function() {
     console.log("Running YelpCamp on port 3000...");
