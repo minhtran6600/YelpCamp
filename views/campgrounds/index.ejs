@@ -14,13 +14,13 @@
         <div class="row text-center" style="display: flex; flex-wrap: wrap;">
             <% campgrounds.forEach(function(campground) { %>
                 <div class="col-md-3 col-sm-6">
-                    <img src= <%= campground.image %> class="img-thumbnail" alt=""> 
-                    <div class="caption">
-                        <h4> <%= campground.name %> </h4>
+                    <div class="card">
+                        <img src= <%= campground.image %> class="card-img-top" alt=""> 
+                        <div class="card-body">
+                            <h4 class="card-title"> <%= campground.name %> </h4>
+                            <a href="/campgrounds/<%= campground._id %> " class="btn btn-primary">More Info</a>
+                        </div>
                     </div>
-                    <p>
-                        <a href="/campgrounds/<%= campground._id %> " class="btn btn-primary">More Info</a>
-                    </p>               
                 </div>
             <% }); %>
         </div>
