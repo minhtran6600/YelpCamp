@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+const campground = require("./models/campground");
 var Campground = require("./models/campground");
 var Comment   = require("./models/comment");
  
@@ -30,28 +31,6 @@ function seedDB(){
              if(err){
                  console.log(err);
              }
-              //add a few campgrounds
-             data.forEach(function(seed){
-                 Campground.create(seed, function(err, campground){
-                     if(err){
-                         console.log(err)
-                     } else {
-                         //create a comment
-                         Comment.create(
-                             {
-                                 text: "This place is great, but I wish there was internet",
-                                 author: "Homer"
-                             }, function(err, comment){
-                                 if(err){
-                                     console.log(err);
-                                 } else {
-                                     campground.comments.push(comment);
-                                     campground.save();
-                                }
-                            });
-                    }
-                });
-            });
         });
     }); 
     //add a few comments

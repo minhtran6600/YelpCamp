@@ -15,10 +15,15 @@ router.post("/", function(req, res) {
     var name = req.body.name;
     var image = req.body.image;
     var desc = req.body.description;
+    var author = {
+        id: req.user._id,
+        username: req.user.username
+    };
     Campground.create( {
         name: name,
         image: image,
-        description: desc
+        description: desc,
+        author: author
     }, function(err, newlyCreated) {
         if (err) console.log(err);
         else res.redirect("/campgrounds");
