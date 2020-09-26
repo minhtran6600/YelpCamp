@@ -4,6 +4,7 @@ const   bodyParser  = require("body-parser");
 const   mongoose    = require("mongoose");
 const   passport    = require("passport");
 const   localStrategy = require("passport-local");
+const   methodOverride = require("method-override");
 
 var Campground = require("./models/campground");
 var Comment = require("./models/comment");
@@ -14,7 +15,7 @@ var commentRoutes = require("./routes/comments");
 var campgroundRoutes = require("./routes/campgrounds");
 var indexRoutes = require("./routes/index");
 
-seedDB();
+// seedDB();
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -36,6 +37,7 @@ app.use(function(req, res, next) {
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method"));
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {
     useNewUrlParser: true,
     useUnifiedTopology: true
