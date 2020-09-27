@@ -35,10 +35,14 @@ app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
-mongoose.connect("mongodb://localhost:27017/yelp_camp", {
+mongoose.connect("mongodb+srv://minhtran:Nguyenminh@66@cluster0.lfeno.mongodb.net/<dbname>?retryWrites=true&w=majority", {
     useNewUrlParser: true,
     useUnifiedTopology: true
-});
+}).then(() => {
+    console.log("Connect to DB!");
+}).catch(err => {
+    console.log("ERROR:", err.message);
+})
 
 app.use(function(req, res, next) {
     res.locals.currentUser = req.user;
