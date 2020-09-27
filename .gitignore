@@ -37,3 +37,6 @@ Temporary Items
 
 # Ignore Node Mod
 node_modules
+
+# Ignore environment variables file
+.env

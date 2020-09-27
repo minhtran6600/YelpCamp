@@ -4,6 +4,7 @@ const   bodyParser  = require("body-parser");
 const   mongoose    = require("mongoose");
 const   passport    = require("passport");
 const   flash       = require("connect-flash");
+const   dotenv      = require('dotenv').config();
 const   localStrategy = require("passport-local");
 const   methodOverride = require("method-override");
 
@@ -35,7 +36,7 @@ app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
-mongoose.connect("mongodb+srv://minhtran:Nguyenminh@66@cluster0.lfeno.mongodb.net/Cluster0?retryWrites=true&w=majority", {
+mongoose.connect(process.env.DATABASEURL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
